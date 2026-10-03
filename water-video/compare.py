@@ -23,4 +23,4 @@ def build(i):
 if __name__=="__main__":
     os.makedirs("cframes",exist_ok=True)
     with Pool(4) as p: p.map(build,range(N))
-    subprocess.run(["ffmpeg","-y","-loglevel","error","-framerate",str(FPS),"-i","cframes/f%04d.png","-i","audio.wav","-c:v","libx264","-preset","veryfast","-pix_fmt","yuv420p","-c:a","aac","-b:a","160k","-shortest","water_compare_vertical_1080x1920.mp4"],check=True)
+    subprocess.run(["ffmpeg","-y","-loglevel","error","-framerate",str(FPS),"-i","cframes/f%04d.png","-i","audio_ocean.wav","-c:v","libx264","-preset","veryfast","-pix_fmt","yuv420p","-c:a","aac","-b:a","160k","-shortest","water_compare_v2_ocean.mp4"],check=True)

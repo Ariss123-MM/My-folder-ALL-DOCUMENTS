@@ -16,7 +16,7 @@ def center(d,txt,y,f,fill):
         w=d.textlength(line,font=f); d.text(((W-w)/2,y+j*84),line,font=f,fill=fill)
 def drop(d,x,y,r,col):
     d.polygon([(x,y-r*2),(x-r,y),(x+r,y)],fill=col); d.ellipse([x-r,y-r,x+r,y+r],fill=col)
-SKIN=(240,190,160); HAIR=(70,40,30); DRESS=(80,170,200)
+SKIN=(150,100,68); HAIR=(70,40,30); DRESS=(80,170,200)
 SHIRT=(225,140,60)
 STX,STY=540,1230   # stomach center
 def frame(i,male=False):
@@ -32,15 +32,35 @@ def frame(i,male=False):
     smile=ease((t-4.8)/0.5)
     if male: lift=0; drinking=False; L=0.04; h=0; glass_level=0; smile=0
     # hair back
-    if not male: d.ellipse([410,490,670,790],fill=HAIR); d.ellipse([480,430,600,520],fill=HAIR)
+    if not male: d.ellipse([415,492,665,760],fill=HAIR)
     # neck & torso
     d.rectangle([505,720,575,830],fill=SKIN)
     DR=SHIRT if male else DRESS
     d.polygon([(310,830),(770,830),(800,1500),(280,1500)],fill=DR)
     d.ellipse([310,780,770,900],fill=DR)
     # head
+    if male:
+        for ex in (428,652): d.ellipse([ex-16,615,ex+16,670],fill=(138,90,60))
     d.ellipse([430,500,650,740],fill=SKIN)
-    d.pieslice([420,480,660,700] if not male else [425,492,655,640],180,360,fill=HAIR)
+    if male:   # neat fade: dense flat-top, stepped taper at the temples
+        d.pieslice([430,488,650,700],200,340,fill=HAIR)
+        for k in range(4):
+            col=lc(HAIR,SKIN,(k+1)/5)
+            d.pieslice([430,488,650,700],200-9*(k+1),200-9*k,fill=col)
+            d.pieslice([430,488,650,700],340+9*k,340+9*(k+1),fill=col)
+        d.line([(452,572),(628,572)],fill=(35,20,15),width=3)   # crisp hairline
+    else:      # braided style: hair cap with cornrow lines, braids hang to both sides
+        d.pieslice([420,480,660,700],180,360,fill=HAIR)
+        for x in range(485,600,28): d.line([(540+(x-540)*0.35,498),(x,586)],fill=(40,25,18),width=3)
+        for side in (-1,1):
+            for j,(sx,ex2,ey) in enumerate([(432,380,1020),(424,350,1090),(442,408,970)]):
+                for u in range(0,41):
+                    p=u/40; x=lerp(sx,ex2,p)+3*math.sin(p*12); y=lerp(590,ey,p)
+                    X=540+side*(540-x) if side==1 else x
+                    cc=(75,48,36) if u%2 else (48,30,22)
+                    d.ellipse([X-11,y-9,X+11,y+9],fill=cc)
+                X=540+side*(540-ex2) if side==1 else ex2
+                d.ellipse([X-9,ey-6,X+9,ey+12],fill=(225,180,60))   # gold bead
     tired=1.0 if male else 1-ease((t-2.0)/0.6)          # droopy lids at start
     for ex in (500,580):
         if lift>0.55 and drinking:     # eyes gently closed while sipping
@@ -61,16 +81,19 @@ def frame(i,male=False):
                 d.rectangle([ex-ew-3,620-eh-4,ex+ew+3,620-eh+int(18*tired)],fill=SKIN)
                 d.line([ex-ew,620-eh+int(18*tired),ex+ew,620-eh+int(18*tired)],fill=(40,25,20),width=4)
         d.line([(ex-24,602-(0 if lift>0.3 else -4)),(ex+22,597-(0 if lift>0.3 else -4))],fill=HAIR,width=6)  # brow
-    d.ellipse([455,650,485,670],fill=(245,150,150)); d.ellipse([595,650,625,670],fill=(245,150,150))
-    if lift>0.5: d.ellipse([524,678,556,700],fill=(170,70,80))          # open mouth
-    elif smile>0.1: d.arc([510,660,570,700],20,160,fill=(170,70,80),width=6)
-    elif male: d.arc([510,688,570,722],200,340,fill=(150,70,70),width=6)
-    else: d.line([515,690,565,690],fill=(170,70,80),width=6)
+    d.ellipse([455,650,485,670],fill=(190,105,95)); d.ellipse([595,650,625,670],fill=(190,105,95))
+    LIP=(120,50,55); LIPH=(165,85,85)
+    if lift>0.5: d.ellipse([520,676,560,704],fill=(70,25,30),outline=LIP,width=8)          # open mouth, moderate lips
+    elif smile>0.1:
+        d.arc([508,658,572,702],20,160,fill=LIP,width=14); d.arc([514,664,566,696],40,140,fill=LIPH,width=3)
+    elif male: d.arc([508,690,572,724],200,340,fill=LIP,width=14)
+    else:
+        d.rounded_rectangle([512,684,568,704],radius=9,fill=LIP); d.line([514,693,566,693],fill=(60,20,25),width=3); d.line([524,688,556,688],fill=LIPH,width=2)
     if male:
-        for ex in (500,580): d.arc([ex-22,628,ex+22,652],20,160,fill=(160,110,130),width=4)   # eye bags
+        for ex in (500,580): d.arc([ex-22,628,ex+22,652],20,160,fill=(105,68,55),width=4)   # eye bags
         for k in range(120): 
             x=470+(k*37)%140; y=665+(k*53)%75
-            if (x-540)**2/70**2+(y-680)**2/40**2>0.2 and y>690: d.point((x,y),fill=(150,115,95))
+            if (x-540)**2/70**2+(y-680)**2/40**2>0.2 and y>690: d.point((x,y),fill=(90,58,44))
         for k in range(3):
             u=(t*0.6+k/3)%1; drop(d,452+k*5,540+u*130,7,(110,180,240))
         for k in range(3):
