@@ -32,7 +32,7 @@ def frame(i,male=False):
     smile=ease((t-4.8)/0.5)
     if male: lift=0; drinking=False; L=0.04; h=0; glass_level=0; smile=0
     # hair back
-    if not male: d.ellipse([415,492,665,760],fill=HAIR)
+    pass
     # neck & torso
     d.rectangle([505,720,575,830],fill=SKIN)
     DR=SHIRT if male else DRESS
@@ -42,25 +42,29 @@ def frame(i,male=False):
     if male:
         for ex in (428,652): d.ellipse([ex-16,615,ex+16,670],fill=(138,90,60))
     d.ellipse([430,500,650,740],fill=SKIN)
-    if male:   # neat fade: dense flat-top, stepped taper at the temples
-        d.pieslice([430,488,650,700],200,340,fill=HAIR)
-        for k in range(4):
-            col=lc(HAIR,SKIN,(k+1)/5)
-            d.pieslice([430,488,650,700],200-9*(k+1),200-9*k,fill=col)
-            d.pieslice([430,488,650,700],340+9*k,340+9*(k+1),fill=col)
-        d.line([(452,572),(628,572)],fill=(35,20,15),width=3)   # crisp hairline
-    else:      # braided style: hair cap with cornrow lines, braids hang to both sides
+    if male:   # low taper fade + goatee
+        d.pieslice([430,492,650,697],200,340,fill=HAIR)
+        for k in range(3):
+            col=lc(HAIR,SKIN,(k+1)/4)
+            d.pieslice([430,492,650,697],200-9*(k+1),200-9*k,fill=col)
+            d.pieslice([430,492,650,697],340+9*k,340+9*(k+1),fill=col)
+        d.line([(455,575),(625,575)],fill=(35,20,15),width=3)
+        d.ellipse([514,714,566,748],fill=(40,25,18)); d.line([(500,684),(580,684)],fill=(40,25,18),width=5)
+    else:      # short bob braids with curtain bangs
+        d.ellipse([420,492,660,730],fill=HAIR)
+        d.ellipse([430,500,650,740],fill=SKIN)
         d.pieslice([420,480,660,700],180,360,fill=HAIR)
-        for x in range(485,600,28): d.line([(540+(x-540)*0.35,498),(x,586)],fill=(40,25,18),width=3)
+        d.polygon([(430,560),(540,500),(650,560),(630,600),(540,560),(450,600)],fill=HAIR)
+        d.line([(540,500),(540,552)],fill=(110,75,55),width=3)
         for side in (-1,1):
-            for j,(sx,ex2,ey) in enumerate([(432,380,1020),(424,350,1090),(442,408,970)]):
+            for j,(sx,ex2,ey) in enumerate([(432,418,800),(424,402,820),(442,430,780)]):
                 for u in range(0,41):
                     p=u/40; x=lerp(sx,ex2,p)+3*math.sin(p*12); y=lerp(590,ey,p)
                     X=540+side*(540-x) if side==1 else x
                     cc=(75,48,36) if u%2 else (48,30,22)
-                    d.ellipse([X-11,y-9,X+11,y+9],fill=cc)
+                    d.ellipse([X-10,y-8,X+10,y+8],fill=cc)
                 X=540+side*(540-ex2) if side==1 else ex2
-                d.ellipse([X-9,ey-6,X+9,ey+12],fill=(225,180,60))   # gold bead
+                d.ellipse([X-9,ey-6,X+9,ey+12],fill=(225,180,60))
     tired=1.0 if male else 1-ease((t-2.0)/0.6)          # droopy lids at start
     for ex in (500,580):
         if lift>0.55 and drinking:     # eyes gently closed while sipping
