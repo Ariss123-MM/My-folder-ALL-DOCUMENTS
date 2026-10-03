@@ -38,8 +38,26 @@ def frame(i):
     # head
     d.ellipse([430,500,650,740],fill=SKIN)
     d.pieslice([420,480,660,700],180,360,fill=HAIR)
+    tired=1-ease((t-2.0)/0.6)          # droopy lids at start
     for ex in (500,580):
-        d.arc([ex-14,610,ex+14,630],200,340,fill=(60,40,30),width=5) if lift>0.3 else d.line([ex-14,620,ex+14,620],fill=(60,40,30),width=5)
+        if lift>0.55 and drinking:     # eyes gently closed while sipping
+            d.arc([ex-20,606,ex+20,636],200,340,fill=(60,40,30),width=5)
+        else:
+            ew,eh=22,15
+            d.ellipse([ex-ew,620-eh,ex+ew,620+eh],fill=(255,255,255),outline=(90,60,50),width=2)
+            lx=-2 if t<2.0 else 3*math.sin(t*2)
+            d.ellipse([ex-11+lx,620-11,ex+11+lx,620+11],fill=(90,140,90))
+            d.ellipse([ex-11+lx,620-11,ex+11+lx,620+11],outline=(50,90,50),width=2)
+            d.ellipse([ex-5+lx,620-5,ex+5+lx,620+5],fill=(15,15,20))
+            d.ellipse([ex-8+lx,620-9,ex-3+lx,620-4],fill=(255,255,255))
+            d.arc([ex-ew-2,620-eh-4,ex+ew+2,620+eh],195,345,fill=(40,25,20),width=4)  # upper lash line
+            for a in (215,250,290,325):
+                x=ex+(ew+2)*math.cos(math.radians(a)); y=620+(eh+1)*math.sin(math.radians(a))
+                d.line([(x,y),(x+7*math.cos(math.radians(a)),y+7*math.sin(math.radians(a)))],fill=(40,25,20),width=3)
+            if tired>0.01:  # heavy eyelid
+                d.rectangle([ex-ew-3,620-eh-4,ex+ew+3,620-eh+int(18*tired)],fill=SKIN)
+                d.line([ex-ew,620-eh+int(18*tired),ex+ew,620-eh+int(18*tired)],fill=(40,25,20),width=4)
+        d.line([(ex-24,602-(0 if lift>0.3 else -4)),(ex+22,597-(0 if lift>0.3 else -4))],fill=HAIR,width=6)  # brow
     d.ellipse([455,650,485,670],fill=(245,150,150)); d.ellipse([595,650,625,670],fill=(245,150,150))
     if lift>0.5: d.ellipse([524,678,556,700],fill=(170,70,80))          # open mouth
     elif smile>0.1: d.arc([510,660,570,700],20,160,fill=(170,70,80),width=6)
